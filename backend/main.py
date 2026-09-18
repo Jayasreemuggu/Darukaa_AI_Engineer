@@ -1,4 +1,4 @@
-﻿import os
+import os
 import pickle
 import uuid
 import json
@@ -220,6 +220,9 @@ def build_variable_interactions(data: Optional[EnvironmentalData]):
     return interactions
 
 
+from pathlib import Path
+import time
+
 def reason(
     query: str,
     evidence: list,
@@ -300,13 +303,104 @@ Rules:
 - Consider multiple environmental variables together.
 """
 
-    response = client.interactions.create(
-        model="gemini-3.6-flash",
-        input=prompt
-    )
+    try:
+        response = client.interactions.create(
+            model="gemini-3.6-flash",
+            input=prompt
+        )
 
-    return response.output_text
+        return response.output_text
 
+    except Exception as error:
+        error_text = str(error).lower()
+
+        if "429" not in error_text and "503" not in error_text:
+            raise
+
+        fallback_sections = []
+
+        if data:
+            fallback_sections.append(
+                "ASSESSMENT\n"
+                + structured_context
+            )
+
+        if variable_interactions:
+            recommendations = "\n".join(
+                f"- {item['implication']}"
+                for item in variable_interactions
+            )
+
+            fallback_sections.append(
+                "RECOMMENDATION\n"
+                + recommendations
+            )
+
+            fallback_sections.append(
+                "WHY IT WORKS\n"
+                "The recommendations are based on deterministic relationships "
+                "between the supplied environmental variables and the "
+                "retrieved scientific knowledge."
+            )
+
+        metrics = []
+
+        if data:
+            if data.soil_organic_carbon is not None:
+                metrics.append("Soil organic carbon")
+
+            if data.soil_moisture is not None:
+                metrics.append("Soil moisture")
+
+            if data.rainfall is not None:
+                metrics.append("Water availability")
+
+            if data.land_use:
+                metrics.append("Land use")
+
+            if data.crop:
+                metrics.append("Crop/agricultural biodiversity")
+
+        fallback_sections.append(
+            "IMPACTED METRICS\n"
+            + ", ".join(metrics)
+            if metrics
+            else
+            "IMPACTED METRICS\n"
+            "Site-specific environmental metrics require assessment."
+        )
+
+        fallback_sections.append(
+            "TIME HORIZON\n"
+            "Timeframe requires site-specific assessment."
+        )
+
+        evidence_lines = []
+
+        for i, item in enumerate(evidence, start=1):
+            evidence_lines.append(
+                f"- Evidence {i}: {item['title']} "
+                f"(similarity {item['similarity']})"
+            )
+
+        fallback_sections.append(
+            "EVIDENCE\n"
+            + (
+                "\n".join(evidence_lines)
+                if evidence_lines
+                else "No retrieved evidence was available."
+            )
+        )
+
+        fallback_sections.append(
+            "LIMITATIONS\n"
+            "Generative reasoning is temporarily unavailable. "
+            "This response uses the retrieved scientific evidence and "
+            "deterministic environmental relationships only. "
+            "Additional site-specific measurements would improve the analysis."
+        )
+
+        return "\n\n".join(fallback_sections)
 
 @app.get("/")
 def root():

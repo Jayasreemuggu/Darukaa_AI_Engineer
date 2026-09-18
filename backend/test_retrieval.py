@@ -1,8 +1,11 @@
-import pickle
 from pathlib import Path
+import json
+import pickle
 
 import faiss
-from sentence_transformers import SentenceTransformer
+import numpy as np
+
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 INDEX_DIR = Path("data/index")
 
@@ -11,24 +14,33 @@ index = faiss.read_index(str(INDEX_DIR / "knowledge.faiss"))
 with open(INDEX_DIR / "documents.pkl", "rb") as f:
     documents = pickle.load(f)
 
-model = SentenceTransformer("all-MiniLM-L6-v2")
+with open(INDEX_DIR / "vectorizer.pkl", "rb") as f:
+    vectorizer = pickle.load(f)
 
-query = "My land has low rainfall, poor soil organic carbon and monoculture farming. How can I improve biodiversity?"
+with open(INDEX_DIR / "metadata.json", "r", encoding="utf-8") as f:
+    metadata = json.load(f)
 
-query_embedding = model.encode(
-    [query],
-    convert_to_numpy=True,
-    normalize_embeddings=True
-).astype("float32")
 
-scores, indices = index.search(query_embedding, k=3)
+def test_index_loaded():
+    assert index.ntotal == len(documents)
+    assert index.ntotal == len(metadata)
+    assert index.d > 0
 
-print("\nQUERY:")
-print(query)
 
-print("\nRETRIEVED KNOWLEDGE:")
-for rank, (score, idx) in enumerate(zip(scores[0], indices[0]), start=1):
-    print(f"\n--- RESULT {rank} | similarity={score:.4f} ---")
-    print(documents[idx][:1200])
+def test_retrieval():
+    query = "soil organic carbon biodiversity"
 
-print("\nRETRIEVAL TEST COMPLETE")
+    query_embedding = vectorizer.transform([query]).toarray().astype("float32")
+
+    norm = np.linalg.norm(query_embedding)
+
+    if norm > 0:
+        query_embedding = query_embedding / norm
+
+    scores, indices = index.search(query_embedding, 3)
+
+    assert indices.shape == (1, 3)
+    assert scores.shape == (1, 3)
+
+    for idx in indices[0]:
+        assert 0 <= idx < len(documents)
