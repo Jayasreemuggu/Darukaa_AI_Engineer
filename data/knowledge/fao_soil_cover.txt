@@ -1,0 +1,21 @@
+TITLE: Soil Organic Cover and Conservation Agriculture
+SOURCE: Food and Agriculture Organization of the United Nations (FAO)
+SOURCE_URL: https://www.fao.org/conservation-agriculture/in-practice/soil-organic-cover/en/
+
+Cover crops and crop residues help maintain soil cover. FAO describes cover crops as beneficial for protecting soil, improving soil structure, recycling nutrients and supporting biodiversity in agro-ecosystems.
+
+Cover crops can be particularly useful in semi-arid or degraded areas. They can utilize residual soil moisture, provide organic matter and improve water infiltration. Mulch from plant residues can reduce evaporation of soil moisture and improve infiltration.
+
+FAO also describes crop diversification as part of conservation agriculture. Diversification can help break monoculture systems and support biological processes above and below the soil surface.
+
+KEY VARIABLES:
+- Soil organic matter
+- Soil moisture
+- Soil structure
+- Water infiltration
+- Crop diversity
+- Biological activity
+- Soil biodiversity
+
+RELEVANCE:
+For a low-rainfall monoculture system with poor soil condition, soil cover and crop diversification are potentially relevant interventions. Site-specific crop selection and water availability must still be considered.

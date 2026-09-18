@@ -1,0 +1,21 @@
+TITLE: Agroforestry and Biodiversity
+SOURCE: Food and Agriculture Organization of the United Nations (FAO)
+SOURCE_URL: https://www.fao.org/americas/priorities/agricultura-sostenible/agrofesteria/en
+
+FAO describes agroforestry as the integration of trees with crops and/or livestock. Agroforestry can support biodiversity and ecosystem services including soil fertility and water regulation.
+
+FAO identifies interactions among trees, crops and livestock that can improve the use of light, water and nutrients. Agroforestry can contribute to soil restoration, biodiversity, water regulation and landscape resilience.
+
+Benefits accumulate over time as trees grow, soils recover and ecological interactions develop. Outcomes depend on local conditions and management.
+
+KEY VARIABLES:
+- Land use
+- Vegetation diversity
+- Soil organic carbon
+- Water regulation
+- Biodiversity
+- Climate resilience
+- Landscape connectivity
+
+RELEVANCE:
+Agroforestry can be considered when the objective is to increase vegetation structural diversity while addressing soil and water-related constraints. The appropriate design must depend on local climate, soil, species and landscape context.

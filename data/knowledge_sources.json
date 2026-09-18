@@ -1,0 +1,22 @@
+{
+  "fao_soil_cover": {
+    "title": "Soil Organic Cover and Conservation Agriculture",
+    "organization": "FAO",
+    "url": "https://www.fao.org/conservation-agriculture/in-practice/soil-organic-cover/en/"
+  },
+  "fao_agroforestry": {
+    "title": "Agroforestry and Biodiversity",
+    "organization": "FAO",
+    "url": "https://www.fao.org/americas/priorities/agricultura-sostenible/agrofesteria/en"
+  },
+  "fao_agricultural_biodiversity": {
+    "title": "Agricultural Biodiversity",
+    "organization": "FAO",
+    "url": "https://www.fao.org/agriculture/crops/thematic-sitemap/theme/compendium/tools-guidelines/what-is-agricultural-biodiversity/en/"
+  },
+  "ipcc_afolu": {
+    "title": "Agriculture, Forestry and Other Land Use",
+    "organization": "IPCC",
+    "url": "https://www.ipcc.ch/report/ar6/wg3/chapter/chapter-7/"
+  }
+}

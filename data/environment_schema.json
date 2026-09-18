@@ -1,0 +1,22 @@
+{
+  "soil_health": {
+    "ph": null,
+    "organic_carbon": null,
+    "moisture": null
+  },
+  "land": {
+    "land_use": null
+  },
+  "biodiversity": {
+    "species_richness": null,
+    "habitat_diversity": null
+  },
+  "climate": {
+    "temperature": null,
+    "rainfall": null
+  },
+  "human_impact": {
+    "pollution": null,
+    "deforestation": null
+  }
+}

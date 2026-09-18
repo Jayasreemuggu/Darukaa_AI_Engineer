@@ -1,0 +1,19 @@
+TITLE: Agriculture, Forestry and Other Land Use
+SOURCE: Intergovernmental Panel on Climate Change (IPCC), AR6 WGIII Chapter 7
+SOURCE_URL: https://www.ipcc.ch/report/ar6/wg3/chapter/chapter-7/
+
+The IPCC identifies agriculture, forestry and other land use as an area where land-management measures can contribute to climate mitigation while also providing food, materials and biodiversity-related benefits.
+
+The IPCC emphasizes that land-based measures can have co-benefits but may also involve trade-offs. Outcomes depend on how measures are implemented and on interactions with food production, habitats, adaptation and biodiversity.
+
+KEY VARIABLES:
+- Land management
+- Land use
+- Biodiversity
+- Habitat conservation
+- Climate
+- Carbon
+- Food production
+
+RELEVANCE:
+Environmental recommendations should consider interactions among multiple objectives rather than assuming that one intervention always produces the same outcome. Site conditions and implementation choices affect both benefits and trade-offs.

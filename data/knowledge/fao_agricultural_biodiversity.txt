@@ -1,0 +1,21 @@
+TITLE: Agricultural Biodiversity
+SOURCE: Food and Agriculture Organization of the United Nations (FAO)
+SOURCE_URL: https://www.fao.org/agriculture/crops/thematic-sitemap/theme/compendium/tools-guidelines/what-is-agricultural-biodiversity/en/
+
+FAO describes agricultural biodiversity as important for ecosystem functions including soil fertility, water regulation, nutrient cycling and pollination.
+
+Crop rotations, crop mixtures, permanent soil cover and agroforestry are examples of practices that can increase planned biodiversity within agricultural systems.
+
+Soil organisms contribute to decomposition, nutrient cycling and soil structure. Crop-associated biodiversity can contribute to pest regulation, pollination, water quality, soil moisture retention and erosion control.
+
+KEY VARIABLES:
+- Crop diversity
+- Soil biodiversity
+- Soil fertility
+- Soil moisture
+- Pollination
+- Pest regulation
+- Nutrient cycling
+
+RELEVANCE:
+Monoculture can be evaluated as one component of a broader biodiversity problem. Crop diversification should be considered together with soil, water, habitat and landscape conditions rather than as an isolated intervention.
