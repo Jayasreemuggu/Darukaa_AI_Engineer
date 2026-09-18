@@ -9,8 +9,8 @@ import faiss
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
-from sentence_transformers import SentenceTransformer
 from google import genai
+
 
 load_dotenv()
 
@@ -31,16 +31,19 @@ with open(INDEX_DIR / "documents.pkl", "rb") as f:
 with open(INDEX_DIR / "metadata.json", "r", encoding="utf-8") as f:
     index_metadata = json.load(f)
 
+with open(INDEX_DIR / "vectorizer.pkl", "rb") as f:
+    vectorizer = pickle.load(f)
+
 with open("data/knowledge_sources.json", "r", encoding="utf-8") as f:
     source_metadata = json.load(f)
 
-embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
 
 app = FastAPI(
     title="Darukaa.Earth AI Environmental Intelligence",
     description="Evidence-grounded biodiversity intelligence API",
     version="3.0.0"
 )
+
 
 # Temporary conversational memory.
 # Each session_id stores previous user queries and assistant responses.
@@ -70,17 +73,20 @@ class QueryRequest(BaseModel):
 
 
 def retrieve(query: str, k: int = 3):
-    query_embedding = embedding_model.encode(
-        [query],
-        convert_to_numpy=True,
-        normalize_embeddings=True
-    ).astype("float32")
+    query_embedding = vectorizer.transform([query]).toarray().astype("float32")
+
+    norm = (query_embedding ** 2).sum() ** 0.5
+    if norm > 0:
+        query_embedding = query_embedding / norm
 
     scores, indices = index.search(query_embedding, k)
 
     evidence = []
 
     for score, idx in zip(scores[0], indices[0]):
+        if idx < 0 or idx >= len(documents):
+            continue
+
         meta = index_metadata[idx]
         source_key = Path(meta["source_file"]).stem
         source_info = source_metadata.get(source_key, {})
@@ -205,6 +211,7 @@ def build_variable_interactions(data: Optional[EnvironmentalData]):
 
     return interactions
 
+
 def reason(
     query: str,
     evidence: list,
@@ -222,9 +229,14 @@ def reason(
     variable_interactions = build_variable_interactions(data)
 
     interaction_context = "\n".join(
-        f"- Variables: {item['variables']}\n  Relationship: {item['relationship']}\n  Implication: {item['implication']}"
+        f"- Variables: {item['variables']}\n"
+        f"  Relationship: {item['relationship']}\n"
+        f"  Implication: {item['implication']}"
         for item in variable_interactions
-    ) if variable_interactions else "No deterministic variable interactions were identified from the provided structured data."
+    ) if variable_interactions else (
+        "No deterministic variable interactions were identified "
+        "from the provided structured data."
+    )
 
     prompt = f"""
 You are Darukaa.Earth's environmental intelligence engine.
@@ -235,6 +247,9 @@ USER QUERY:
 {structured_context}
 
 {memory_context}
+
+DETERMINISTIC VARIABLE INTERACTIONS:
+{interaction_context}
 
 RETRIEVED KNOWLEDGE:
 {evidence_context}
@@ -344,7 +359,9 @@ def analyze(request: QueryRequest):
             "query": request.query,
             "answer": answer,
             "conversation_turns": len(conversation_memory[session_id]),
-            "reasoning_signals": build_variable_interactions(request.environmental_data),
+            "reasoning_signals": build_variable_interactions(
+                request.environmental_data
+            ),
             "retrieved_evidence": evidence
         }
 
@@ -353,6 +370,3 @@ def analyze(request: QueryRequest):
             status_code=500,
             detail=str(e)
         )
-
-
-

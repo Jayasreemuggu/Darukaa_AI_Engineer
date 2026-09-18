@@ -3,7 +3,8 @@ import json
 import pickle
 
 import faiss
-from sentence_transformers import SentenceTransformer
+import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 KNOWLEDGE_DIR = Path("data/knowledge")
 INDEX_DIR = Path("data/index")
@@ -29,13 +30,17 @@ if not documents:
 
 print(f"Documents loaded: {len(documents)}")
 
-model = SentenceTransformer("all-MiniLM-L6-v2")
+vectorizer = TfidfVectorizer(
+    lowercase=True,
+    stop_words="english",
+    ngram_range=(1, 2),
+    max_features=5000
+)
 
-embeddings = model.encode(
-    documents,
-    convert_to_numpy=True,
-    normalize_embeddings=True
-).astype("float32")
+embeddings = vectorizer.fit_transform(documents).toarray().astype("float32")
+
+norms = np.linalg.norm(embeddings, axis=1, keepdims=True)
+embeddings = embeddings / np.maximum(norms, 1e-12)
 
 dimension = embeddings.shape[1]
 
@@ -50,9 +55,13 @@ with open(INDEX_DIR / "documents.pkl", "wb") as f:
 with open(INDEX_DIR / "metadata.json", "w", encoding="utf-8") as f:
     json.dump(metadata, f, indent=2, ensure_ascii=False)
 
+with open(INDEX_DIR / "vectorizer.pkl", "wb") as f:
+    pickle.dump(vectorizer, f)
+
 print(f"Embedding dimension: {dimension}")
 print(f"Vectors indexed: {index.ntotal}")
 print("FAISS index: data/index/knowledge.faiss")
 print("Documents: data/index/documents.pkl")
 print("Metadata: data/index/metadata.json")
+print("Vectorizer: data/index/vectorizer.pkl")
 print("RAG INDEX READY")

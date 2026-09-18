@@ -5,8 +5,8 @@ pydantic
 pandas
 numpy
 scikit-learn
-sentence-transformers
 faiss-cpu
 pypdf
 google-genai
 pytest
+httpx
