@@ -1,390 +1,258 @@
-# Darukaa.Earth AI Biodiversity Intelligence
+﻿# Darukaa.Earth — AI Biodiversity & Environmental Intelligence
 
-An evidence-grounded AI environmental intelligence system that combines Retrieval-Augmented Generation (RAG), structured environmental data, multi-variable reasoning, conversational memory, and scientific evidence to generate practical biodiversity recommendations.
+An evidence-grounded AI system for environmental and biodiversity intelligence. The system combines structured environmental inputs, deterministic multi-variable reasoning, Retrieval-Augmented Generation (RAG), scientific evidence, conversational context, and Gemini-based reasoning to produce actionable environmental recommendations.
 
-## Problem Statement
+## Live Demo
 
-Environmental recommendations depend on interactions between multiple factors such as:
+- Frontend: https://jayasreemuggu.github.io/Darukaa_AI_Engineer/frontend/
+- Backend API: https://darukaa-ai-engineer.onrender.com
+- API Documentation: https://darukaa-ai-engineer.onrender.com/docs
+- GitHub Repository: https://github.com/Jayasreemuggu/Darukaa_AI_Engineer
+
+## Problem
+
+Environmental decisions often require reasoning across multiple interacting variables such as:
 
 - Soil organic carbon
 - Soil moisture
 - Rainfall
 - Land use
-- Crop type
+- Crop systems
 - Biodiversity
-- Habitat conditions
-- Climate conditions
+- Habitat and ecological conditions
 
-A generic LLM may generate plausible recommendations without clearly demonstrating the scientific basis behind them.
+A generic language model can produce plausible advice, but it does not guarantee that recommendations are grounded in environmental evidence.
 
-This project addresses this problem by combining structured environmental information with a retrievable scientific knowledge layer and explicit multi-variable reasoning.
+Darukaa.Earth addresses this by combining structured environmental data, retrieval, deterministic environmental reasoning, and evidence-grounded AI generation.
 
 ## Key Features
 
-- Retrieval-Augmented Generation (RAG)
-- FAISS vector similarity search
-- SentenceTransformer embeddings
-- Gemini-based reasoning
-- Structured environmental inputs
-- Deterministic multi-variable reasoning
-- Conversational session memory
-- Evidence provenance
-- Evidence-backed recommendations
-- Structured environmental assessment
-- Uncertainty and limitation handling
-- FastAPI REST API
-- Interactive Swagger API documentation
+### Evidence-Grounded RAG
+
+The system retrieves relevant information from a curated environmental knowledge base before generating recommendations.
+
+Current knowledge sources include:
+
+- FAO — Soil Organic Cover and Conservation Agriculture
+- FAO — Agroforestry and Biodiversity
+- FAO — Agricultural Biodiversity
+- IPCC AR6 WGIII — AFOLU
+
+Retrieved evidence is displayed to the user with source information.
+
+### Multi-Variable Environmental Reasoning
+
+The system reasons across interacting environmental variables, including:
+
+- Soil organic carbon ↔ soil moisture
+- Soil moisture ↔ water availability
+- Land use ↔ biodiversity
+- Crop diversity ↔ agricultural biodiversity
+- Agroforestry ↔ habitat and soil conditions
+
+### Structured Environmental Inputs
+
+The API accepts structured environmental information such as:
+
+- Soil organic carbon
+- Soil moisture
+- Rainfall
+- Land use
+- Crop
+- Region
+
+Example:
+
+{
+  "soil_organic_carbon": 0.8,
+  "soil_moisture": 22,
+  "land_use": "cropland",
+  "rainfall": "low",
+  "crop": "wheat",
+  "region": "semi-arid"
+}
+
+### Conversational Intelligence
+
+The system can:
+
+- Identify missing environmental information
+- Ask for clarification when important variables are absent
+- Maintain recent conversational context
+- Adapt recommendations to supplied environmental conditions
+
+### Evidence-Backed Recommendations
+
+Recommendations contain:
+
+- Recommended action
+- Scientific reasoning
+- Impacted environmental metrics
+- Time horizon
+- Supporting evidence
+- Limitations
+
+### Explainable Reasoning Signals
+
+The API exposes structured reasoning signals showing how environmental variables contribute to the final recommendation.
 
 ## System Architecture
 
-User Query
-    |
-    v
-FastAPI API
-    |
-    v
-Query Understanding
-    |
-    +-------------------------+
-    |                         |
-    v                         v
-Structured Environmental   Conversation
-Data                        Memory
-    |                         |
-    +------------+------------+
-                 |
-                 v
-       Multi-Variable Reasoning
-                 |
-                 v
-          FAISS Retrieval
-                 |
-                 v
-        Retrieved Evidence
-                 |
-                 v
-         Gemini Reasoning
-                 |
-                 v
-    Evidence-backed Recommendation
-                 |
-                 v
-        Structured API Response
+User
+  |
+  v
+Web Frontend
+  |
+  v
+FastAPI Backend
+  |
+  +--> Query Understanding
+  |
+  +--> Structured Environmental Data
+  |
+  +--> Missing Information Detection
+  |
+  +--> Environmental Interaction Reasoning
+  |
+  +--> TF-IDF Retrieval
+  |       |
+  |       v
+  |    FAISS Index
+  |       |
+  |       v
+  |    Scientific Knowledge
+  |
+  +--> Conversational Memory
+  |
+  v
+Gemini Reasoning Layer
+  |
+  v
+Evidence-Grounded Recommendation
+  |
+  +--> Recommendation
+  +--> Impacted Metrics
+  +--> Time Horizon
+  +--> Evidence
+  +--> Reasoning Signals
+  +--> Limitations
 
 ## RAG Pipeline
 
-Scientific Knowledge
+Scientific Documents
         |
         v
-Knowledge Documents
+Text Processing
         |
         v
-SentenceTransformer Embeddings
+TF-IDF Vectorization
         |
         v
-FAISS Vector Index
+Normalized Vectors
         |
         v
-User Query
+FAISS Similarity Index
         |
         v
-Query Embedding
-        |
-        v
-Similarity Search
-        |
-        v
-Top-K Retrieved Evidence
+Relevant Evidence Retrieval
         |
         v
 Gemini Reasoning
         |
         v
-Final Recommendation
+Grounded Environmental Recommendation
 
-## Knowledge Base
+The retrieval layer is implemented separately from the language model so that the model is not the sole source of environmental knowledge.
 
-The current knowledge base contains source-backed summaries from FAO and IPCC material.
+## Retrieval Architecture
 
-### FAO - Soil Organic Cover and Conservation Agriculture
+The deployed version uses a lightweight retrieval architecture:
 
-The document covers:
+- TF-IDF for lexical feature extraction
+- FAISS for similarity search
+- Normalized vectors with inner-product similarity
+- Local indexed scientific documents
+- Metadata stored alongside the indexed documents
 
-- Soil cover
-- Cover crops
-- Crop residues
-- Soil structure
-- Organic matter
-- Water infiltration
-- Evaporation
-- Crop diversification
-- Soil biodiversity
+This design avoids loading large transformer models during deployment and keeps the application suitable for a constrained cloud environment.
 
-Source: https://www.fao.org/conservation-agriculture/in-practice/soil-organic-cover/en/
+## Scientific Grounding
 
-### FAO - Agricultural Biodiversity
+The knowledge base contains information from recognized environmental and scientific organizations, including FAO and IPCC.
 
-The document covers:
+Each retrieved document retains source metadata so recommendations can be traced back to supporting evidence.
 
-- Crop rotations
-- Crop mixtures
-- Permanent soil cover
-- Agroforestry
-- Soil organisms
-- Nutrient cycling
-- Pollination
-- Pest regulation
-- Soil moisture
-- Ecosystem functions
-
-Source: https://www.fao.org/agriculture/crops/thematic-sitemap/theme/compendium/tools-guidelines/what-is-agricultural-biodiversity/en/
-
-### FAO - Agroforestry and Biodiversity
-
-The document covers:
-
-- Trees with crops and livestock
-- Biodiversity
-- Ecosystem services
-- Soil fertility
-- Water regulation
-- Tree-crop interactions
-- Resource competition
-- Landscape resilience
-
-Source: https://www.fao.org/americas/priorities/agricultura-sostenible/agrofesteria/en
-
-### IPCC - Agriculture, Forestry and Other Land Use
-
-Based on IPCC AR6 WGIII Chapter 7.
-
-The document covers:
-
-- Land management
-- Climate mitigation
-- Biodiversity
-- Habitat conservation
-- Carbon
-- Food production
-- Co-benefits
-- Trade-offs
-- Site-specific implementation
-
-Source: https://www.ipcc.ch/report/ar6/wg3/chapter/chapter-7/
-
-## Structured Environmental Data
-
-The API supports the following environmental variables:
-
-| Variable | Description |
-|---|---|
-| soil_ph | Soil pH |
-| soil_organic_carbon | Soil organic carbon |
-| soil_moisture | Soil moisture |
-| land_use | Land-use category |
-| species_richness | Species richness |
-| habitat_diversity | Habitat diversity |
-| temperature | Temperature |
-| rainfall | Rainfall condition |
-| pollution | Pollution condition |
-| deforestation | Deforestation condition |
-| crop | Crop type |
-| region | Geographic/environmental region |
-
-## Multi-Variable Reasoning
-
-The system does not treat environmental variables independently.
-
-A deterministic reasoning layer identifies relationships between environmental variables before the LLM generates the final recommendation.
-
-Examples include:
-
-### Rainfall + Soil Moisture
-
-Low rainfall combined with low soil moisture indicates a water-availability constraint.
-
-### Soil Organic Carbon + Soil Moisture
-
-Low soil organic carbon and low soil moisture represent interacting soil-resource constraints.
-
-### Crop + Biodiversity
-
-A single-crop system provides less planned crop diversity than a diversified cropping system.
-
-### Crop + Rainfall + Land Use
-
-Growing a crop in a low-rainfall cropland system makes water availability an important constraint when considering additional vegetation.
-
-These relationships are passed to the reasoning layer as structured reasoning signals.
-
-The reasoning signals are not treated as scientific evidence by themselves. Scientific claims are supported through retrieved knowledge.
-
-## Conversational Memory
-
-The system supports multi-turn conversations using a session_id.
-
-Example:
-
-User:
-My farm has low rainfall and low soil organic carbon.
-
-Assistant:
-Provides recommendations based on the provided conditions.
-
-User:
-What about adding trees?
-
-Assistant:
-Uses the previous conversation context and environmental conditions when interpreting the follow-up question.
-
-Recent conversation history is included in the reasoning context for the same session.
-
-## Evidence Provenance
-
-Each retrieved knowledge item contains:
-
-- Similarity score
-- Source title
-- Organization
-- Source URL
-- Retrieved content
-
-Example:
-
-{
-    "similarity": 0.4984,
-    "title": "Soil Organic Cover and Conservation Agriculture",
-    "source": "FAO",
-    "source_url": "https://www.fao.org/conservation-agriculture/in-practice/soil-organic-cover/en/"
-}
-
-This allows recommendations to be traced back to the retrieved knowledge sources.
-
-## Recommendation Structure
-
-The generated response follows a structured format.
-
-### ASSESSMENT
-
-Explains the environmental conditions and how they interact.
-
-### RECOMMENDATION
-
-Provides specific practical actions.
-
-### WHY IT WORKS
-
-Explains the scientific mechanisms using retrieved evidence.
-
-### IMPACTED METRICS
-
-Identifies environmental metrics potentially affected by the recommendation.
-
-### TIME HORIZON
-
-Provides only evidence-supported time horizons.
-
-If the available evidence does not establish a timeframe, the system reports:
-
-"Timeframe requires site-specific assessment."
-
-### EVIDENCE
-
-Connects major recommendations to retrieved evidence.
-
-### LIMITATIONS
-
-Describes uncertainty, site-specific constraints, and additional information required.
-
-## Example Request
-
-{
-    "query": "My farm has low rainfall, low soil organic carbon and wheat monoculture. What should I do?",
-    "environmental_data": {
-        "soil_organic_carbon": 0.8,
-        "soil_moisture": 22,
-        "land_use": "cropland",
-        "rainfall": "low",
-        "crop": "wheat",
-        "region": "semi-arid"
-    },
-    "top_k": 3
-}
-
-## Example Processing Flow
-
-Input Environmental Conditions
-        |
-        v
-Variable Interaction Detection
-        |
-        v
-FAISS Knowledge Retrieval
-        |
-        v
-Relevant FAO/IPCC Evidence
-        |
-        v
-Gemini Reasoning
-        |
-        v
-Environmental Assessment
-        |
-        v
-Recommendations
-        |
-        v
-Impacted Metrics
-        |
-        v
-Evidence and Limitations
-
-## API Endpoints
-
-### Root
-
-GET /
-
-Returns basic application information.
+## API
 
 ### Health Check
 
 GET /health
 
-Returns:
-
-- API status
-- Number of knowledge documents
-- Number of indexed vectors
-- Active sessions
-
 ### Environmental Analysis
 
 POST /analyze
 
-Accepts:
+Example request:
 
-- User query
-- Environmental data
-- Optional session ID
-- Number of retrieved documents
+{
+  "query": "My farm has low rainfall, low soil organic carbon and wheat monoculture. What should I do?",
+  "environmental_data": {
+    "soil_organic_carbon": 0.8,
+    "soil_moisture": 22,
+    "land_use": "cropland",
+    "rainfall": "low",
+    "crop": "wheat",
+    "region": "semi-arid"
+  },
+  "top_k": 3
+}
 
-Returns:
+The response contains:
 
-- Status
-- Session ID
-- Generated answer
-- Conversation turn count
+- AI recommendation
+- Environmental assessment
 - Reasoning signals
 - Retrieved evidence
+- Impacted metrics
+- Time horizon
+- Limitations
 
-## Interactive API Documentation
+## Technology Stack
 
-When the backend is running locally:
+### Backend
 
-http://127.0.0.1:8001/docs
+- Python
+- FastAPI
+- Uvicorn
+- Pydantic
+- Pandas
+- NumPy
+- Scikit-learn
+- FAISS
+- Google Gemini API
 
-FastAPI provides an interactive Swagger interface for testing the API.
+### AI / Retrieval
+
+- Retrieval-Augmented Generation
+- TF-IDF
+- FAISS similarity search
+- Structured environmental reasoning
+- Conversational memory
+- Evidence provenance
+
+### Frontend
+
+- HTML
+- CSS
+- JavaScript
+- REST API integration
+
+### Deployment
+
+- GitHub
+- GitHub Actions
+- Render
+- GitHub Pages
 
 ## Project Structure
 
@@ -396,273 +264,186 @@ Darukaa_AI_Engineer/
 |
 +-- data/
 |   +-- knowledge/
-|   |   +-- fao_soil_cover.txt
-|   |   +-- fao_agroforestry.txt
-|   |   +-- fao_agricultural_biodiversity.txt
-|   |   +-- ipcc_afolu.txt
-|   |
 |   +-- index/
-|   |   +-- knowledge.faiss
-|   |   +-- documents.pkl
-|   |   +-- metadata.json
-|   |
-|   +-- environment_schema.json
-|   +-- knowledge_sources.json
+|
++-- frontend/
+|   +-- index.html
 |
 +-- tests/
+|   +-- test_api.py
 |
 +-- .github/
 |   +-- workflows/
+|       +-- ci.yml
 |
-+-- .env
++-- requirements.txt
++-- runtime.txt
 +-- .gitignore
 +-- README.md
-+-- requirements.txt
 
-## Technology Stack
+## Local Setup
 
-| Component | Technology |
-|---|---|
-| Programming Language | Python |
-| API Framework | FastAPI |
-| LLM | Gemini |
-| Embeddings | SentenceTransformers |
-| Vector Search | FAISS |
-| Data Processing | Pandas / NumPy |
-| Validation | Pydantic |
-| Server | Uvicorn |
-| Knowledge Sources | FAO / IPCC |
+Clone the repository:
 
-## Installation
+git clone https://github.com/Jayasreemuggu/Darukaa_AI_Engineer.git
 
-### 1. Clone the Repository
-
-git clone <YOUR_GITHUB_REPOSITORY_URL>
 cd Darukaa_AI_Engineer
 
-### 2. Create a Virtual Environment
+Create the virtual environment:
 
 python -m venv .venv
 
-### 3. Activate the Environment
-
-Windows PowerShell:
-
-.\.venv\Scripts\Activate.ps1
-
-### 4. Install Dependencies
+Install dependencies:
 
 pip install -r requirements.txt
 
-## Environment Configuration
+Create a .env file containing:
 
-Create a .env file in the project root.
+GEMINI_API_KEY=your_api_key
 
-GEMINI_API_KEY=your_gemini_api_key
-
-Do not commit the .env file to GitHub.
-
-The .gitignore file should include:
-
-.env
-.venv/
-__pycache__/
-*.pyc
-
-## Build the Knowledge Index
-
-Run:
+Build the knowledge index:
 
 python backend/build_index.py
 
-The indexing pipeline:
+Run the backend:
 
-1. Loads knowledge documents.
-2. Generates embeddings.
-3. Normalizes embeddings.
-4. Creates the FAISS index.
-5. Stores document metadata.
+python -m uvicorn backend.main:app --reload
 
-Generated files:
+The API will be available at:
 
-data/index/knowledge.faiss
-data/index/documents.pkl
-data/index/metadata.json
+http://127.0.0.1:8000
 
-## Run the Backend
+Swagger documentation:
 
-python -m uvicorn backend.main:app --host 127.0.0.1 --port 8001
+http://127.0.0.1:8000/docs
 
-Then open:
+## Frontend Local Setup
 
-http://127.0.0.1:8001/docs
+From the project directory:
 
-## Scientific Grounding
+cd frontend
 
-The current knowledge layer uses source-backed summaries based on FAO and IPCC material.
+python -m http.server 5500
 
-The LLM is not treated as the primary scientific knowledge source.
+Open:
 
-Instead, the system follows:
+http://localhost:5500
 
-Scientific Sources
-        |
-        v
-Knowledge Documents
-        |
-        v
-Embeddings
-        |
-        v
-FAISS Retrieval
-        |
-        v
-Relevant Evidence
-        |
-        v
-Gemini Reasoning
-        |
-        v
-Recommendation
+The frontend communicates with the deployed FastAPI backend.
 
-This separates knowledge retrieval from language generation.
+## Testing
 
-## Evidence vs Reasoning
+Run:
 
-The system separates three concepts.
+pytest tests/test_api.py -v
 
-### Retrieved Evidence
+The backend test suite covers the core API behavior and uses a mocked reasoning layer during tests.
 
-Information retrieved from the scientific knowledge base.
+## Deployment
 
-### Reasoning Signals
+The project uses a separated frontend/backend deployment architecture.
 
-Structured relationships identified from the supplied environmental variables.
+Frontend:
+GitHub Pages
 
-### Generated Recommendation
+Backend:
+Render
 
-The final recommendation generated using the retrieved evidence, structured data, reasoning signals, and conversational context.
+The frontend sends requests to the deployed FastAPI API.
 
-This separation helps distinguish source-supported information from model reasoning.
+## CORS
 
-## Design Principles
-
-### Evidence Before Generation
-
-Relevant knowledge is retrieved before recommendations are generated.
-
-### Multi-Variable Analysis
-
-Environmental conditions are considered together rather than independently.
-
-### Traceability
-
-Retrieved evidence exposes source metadata and source URLs.
-
-### Explicit Uncertainty
-
-Unsupported numerical claims and unsupported timeframes are avoided.
-
-### Site-Specific Reasoning
-
-Environmental interventions may involve trade-offs, so local environmental conditions are considered.
-
-### Modular Architecture
-
-Retrieval, reasoning, memory, API, and knowledge storage are separated so individual components can be extended independently.
-
-## Current Limitations
-
-- The current knowledge base contains a limited number of source documents.
-- Conversation memory is currently stored in process memory.
-- The current system does not yet use live geospatial datasets.
-- Quantitative prediction of environmental outcomes requires additional validated datasets.
-- Specific crop and intervention suitability remains site-specific.
-- The current knowledge documents are source-backed summaries rather than complete copies of the original publications.
-
-## Future Improvements
-
-### Knowledge Layer
-
-- Expand the scientific knowledge base.
-- Add more environmental reports and research.
-- Improve document chunking.
-- Add metadata-aware retrieval.
-- Implement hybrid keyword and vector retrieval.
-
-### Environmental Intelligence
-
-- Integrate satellite-derived indicators.
-- Integrate soil datasets.
-- Integrate biodiversity datasets.
-- Integrate climate datasets.
-- Add geospatial analysis.
-
-### AI
-
-- Confidence estimation.
-- Improved evidence-to-recommendation mapping.
-- Automated factuality evaluation.
-- Advanced multi-objective reasoning.
-
-### Memory
-
-- Persistent database-backed conversation memory.
-- User-specific environmental profiles.
-
-### Deployment
-
-- Docker.
-- Cloud deployment.
-- CI/CD.
-- Automated testing.
-- Production monitoring.
+The backend includes CORS configuration so the GitHub Pages frontend can communicate with the deployed FastAPI service.
 
 ## Evaluation Alignment
 
-| Challenge Requirement | Project Implementation |
-|---|---|
-| Reasoning depth | Deterministic multi-variable reasoning + Gemini |
-| Scientific grounding | FAO/IPCC knowledge retrieval |
-| Knowledge design | Structured knowledge documents + FAISS |
-| Conversational intelligence | Session-based conversation memory |
-| Evidence-backed recommendations | Retrieved evidence + provenance |
-| Multi-metric reasoning | Explicit environmental variable interactions |
-| Output clarity | Structured response sections |
-| Uncertainty handling | Limitations and unsupported timeframe handling |
+### Reasoning — 30%
 
-## Current Status
+The system combines deterministic environmental interaction logic with Gemini reasoning rather than relying only on free-form generation.
 
-The current prototype demonstrates:
+### Scientific Grounding — 25%
 
-- FastAPI backend
-- Gemini integration
-- SentenceTransformer embeddings
-- FAISS vector retrieval
-- Source metadata
-- Evidence provenance
-- Structured environmental inputs
-- Multi-variable reasoning signals
-- Conversational memory
-- Evidence-backed recommendations
-- Structured response format
-- Swagger API documentation
+Recommendations are connected to retrieved evidence from FAO and IPCC sources.
 
-## Project Goal
+### Knowledge Design — 20%
 
-The objective is not simply to generate environmental advice using an LLM.
+The knowledge layer is stored separately from the model and indexed for retrieval.
 
-The objective is to build an evidence-grounded environmental intelligence system in which:
+### Conversational Intelligence — 15%
 
-Environmental Context
-        +
-Scientific Knowledge
-        +
-Multi-Variable Reasoning
-        +
-Conversational Context
-        |
-        v
-Evidence-backed Environmental Recommendation
+The backend supports context-aware analysis and missing-information detection.
 
-The architecture is designed to make AI-generated biodiversity recommendations more traceable, explainable, and scientifically grounded.
+### Output Clarity — 10%
+
+The response separates:
+
+- Recommendation
+- Impacted metrics
+- Time horizon
+- Evidence
+- Reasoning signals
+- Limitations
+
+## Example Environmental Scenario
+
+Input:
+
+"My farm has low rainfall, low soil organic carbon and wheat monoculture. What should I do?"
+
+Environmental conditions:
+
+- Soil organic carbon: 0.8
+- Soil moisture: 22
+- Rainfall: Low
+- Land use: Cropland
+- Crop: Wheat
+- Region: Semi-arid
+
+The system identifies interacting constraints involving water availability, soil condition and crop diversity, retrieves relevant scientific evidence, and generates recommendations such as soil-cover/residue management, crop diversification and targeted agroforestry where appropriate.
+
+## Limitations
+
+- The current knowledge base is intentionally small and curated for the prototype.
+- TF-IDF retrieval is lexical rather than transformer-based semantic retrieval.
+- Environmental recommendations are decision-support outputs and should be interpreted alongside site-specific expertise.
+- More geographic and temporal data would improve location-specific recommendations.
+- Larger validated environmental datasets could support stronger quantitative prediction models.
+
+## Future Improvements
+
+- Expand the environmental and biodiversity knowledge base
+- Add larger environmental datasets
+- Add geospatial coordinate support
+- Integrate satellite-derived environmental indicators
+- Add stronger semantic retrieval
+- Add evidence reranking
+- Add PostgreSQL/PostGIS
+- Add retrieval-quality evaluation
+- Add uncertainty estimation
+- Add environmental time-series analysis
+- Add automated monitoring and observability
+
+## Security
+
+- API keys are stored through environment variables.
+- The .env file is excluded from Git.
+- Sensitive credentials are not committed to the repository.
+
+## Repository
+
+https://github.com/Jayasreemuggu/Darukaa_AI_Engineer
+
+## Live Services
+
+Frontend:
+https://jayasreemuggu.github.io/Darukaa_AI_Engineer/frontend/
+
+Backend:
+https://darukaa-ai-engineer.onrender.com
+
+Swagger:
+https://darukaa-ai-engineer.onrender.com/docs
+
+## Author
+
+Developed as an AI Engineer internship challenge project for Darukaa.Earth.
