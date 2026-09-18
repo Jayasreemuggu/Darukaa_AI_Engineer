@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Darukaa.Earth AI Environmental Intelligence</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7f5;
+            color: #1f2933;
+        }
+
+        .header {
+            background: #173b2b;
+            color: white;
+            padding: 22px 40px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.85;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        textarea,
+        input,
+        select {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #d5dce0;
+            border-radius: 7px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        textarea {
+            height: 90px;
+            resize: vertical;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        button {
+            background: #1f6b4a;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #174f37;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+        .status {
+            margin-top: 15px;
+            font-size: 13px;
+        }
+
+        .answer {
+            white-space: pre-wrap;
+            line-height: 1.65;
+            font-size: 14px;
+        }
+
+        .evidence {
+            margin-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 20px;
+        }
+
+        .evidence-item {
+            background: #f7faf8;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .evidence-item h4 {
+            margin-bottom: 5px;
+        }
+
+        .evidence-item a {
+            color: #1f6b4a;
+            font-size: 13px;
+        }
+
+        .signal {
+            margin-top: 10px;
+            padding: 12px;
+            background: #f5f7f6;
+            border-left: 4px solid #1f6b4a;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 800px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>Darukaa.Earth</h1>
+    <p>AI Environmental & Biodiversity Intelligence</p>
+</div>
+
+<div class="container">
+
+    <div class="card">
+        <h2>Environmental Analysis</h2>
+        <br>
+
+        <label>Ask your question</label>
+        <textarea id="query"
+            placeholder="Example: My farm has low rainfall, low soil organic carbon and wheat monoculture. What should I do?"></textarea>
+
+        <div class="grid">
+
+            <div>
+                <label>Soil Organic Carbon</label>
+                <input id="soc" type="number" step="0.1" value="0.8">
+            </div>
+
+            <div>
+                <label>Soil Moisture (%)</label>
+                <input id="moisture" type="number" step="0.1" value="22">
+            </div>
+
+            <div>
+                <label>Rainfall</label>
+                <select id="rainfall">
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Land Use</label>
+                <input id="land_use" value="cropland">
+            </div>
+
+            <div>
+                <label>Crop</label>
+                <input id="crop" value="wheat">
+            </div>
+
+            <div>
+                <label>Region</label>
+                <input id="region" value="semi-arid">
+            </div>
+
+        </div>
+
+        <button id="analyzeBtn" onclick="analyze()">Analyze Environment</button>
+
+        <div id="status" class="status"></div>
+    </div>
+
+
+    <div id="result" class="card hidden">
+
+        <h2>AI Assessment</h2>
+        <br>
+
+        <div id="answer" class="answer"></div>
+
+        <div class="evidence">
+            <h3>Retrieved Scientific Evidence</h3>
+            <div id="evidenceList"></div>
+        </div>
+
+        <div class="evidence">
+            <h3>Reasoning Signals</h3>
+            <div id="signalsList"></div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const API_URL = "https://darukaa-ai-engineer.onrender.com";
+
+async function analyze() {
+
+    const button = document.getElementById("analyzeBtn");
+    const status = document.getElementById("status");
+    const result = document.getElementById("result");
+
+    const query = document.getElementById("query").value.trim();
+
+    if (!query) {
+        status.textContent = "Please enter an environmental question.";
+        return;
+    }
+
+    const body = {
+        query: query,
+        environmental_data: {
+            soil_organic_carbon: Number(document.getElementById("soc").value),
+            soil_moisture: Number(document.getElementById("moisture").value),
+            rainfall: document.getElementById("rainfall").value,
+            land_use: document.getElementById("land_use").value,
+            crop: document.getElementById("crop").value,
+            region: document.getElementById("region").value
+        },
+        top_k: 3
+    };
+
+    button.disabled = true;
+    status.textContent = "Analyzing environmental conditions and retrieving evidence...";
+    result.classList.add("hidden");
+
+    try {
+
+        const response = await fetch(`${API_URL}/analyze`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(body)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.detail || "API request failed.");
+        }
+
+        document.getElementById("answer").textContent = data.answer;
+
+        const evidenceList = document.getElementById("evidenceList");
+        evidenceList.innerHTML = "";
+
+        data.retrieved_evidence.forEach(item => {
+
+            const div = document.createElement("div");
+            div.className = "evidence-item";
+
+            div.innerHTML = `
+                <h4>${item.title}</h4>
+                <p><strong>Source:</strong> ${item.source}</p>
+                <p><strong>Similarity:</strong> ${item.similarity}</p>
+                <a href="${item.source_url}" target="_blank">
+                    View source
+                </a>
+            `;
+
+            evidenceList.appendChild(div);
+        });
+
+        const signalsList = document.getElementById("signalsList");
+        signalsList.innerHTML = "";
+
+        data.reasoning_signals.forEach(signal => {
+
+            const div = document.createElement("div");
+            div.className = "signal";
+
+            div.innerHTML = `
+                <strong>Variables:</strong>
+                ${signal.variables.join(", ")}
+                <br><br>
+                <strong>Relationship:</strong>
+                ${signal.relationship}
+                <br><br>
+                <strong>Implication:</strong>
+                ${signal.implication}
+            `;
+
+            signalsList.appendChild(div);
+        });
+
+        result.classList.remove("hidden");
+        status.textContent = "Analysis completed successfully.";
+
+    } catch (error) {
+
+        status.textContent = "Error: " + error.message;
+
+    } finally {
+
+        button.disabled = false;
+    }
+}
+
+</script>
+
+</body>
+</html>
