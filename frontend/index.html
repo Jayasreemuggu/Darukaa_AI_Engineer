@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Darukaa.Earth AI Environmental Intelligence</title>
+
     <style>
         * {
             box-sizing: border-box;
@@ -47,6 +48,10 @@
             margin-bottom: 20px;
         }
 
+        .card h2 {
+            color: #173b2b;
+        }
+
         label {
             display: block;
             font-size: 13px;
@@ -63,11 +68,20 @@
             border-radius: 7px;
             margin-bottom: 15px;
             font-size: 14px;
+            background: white;
         }
 
         textarea {
             height: 90px;
             resize: vertical;
+        }
+
+        textarea:focus,
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #1f6b4a;
+            box-shadow: 0 0 0 2px rgba(31,107,74,0.08);
         }
 
         .grid {
@@ -101,52 +115,280 @@
             font-size: 13px;
         }
 
-        .answer {
-            white-space: pre-wrap;
-            line-height: 1.65;
-            font-size: 14px;
-        }
-
-        .evidence {
-            margin-top: 20px;
-            border-top: 1px solid #e5e7eb;
-            padding-top: 20px;
-        }
-
-        .evidence-item {
-            background: #f7faf8;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 10px;
-        }
-
-        .evidence-item h4 {
-            margin-bottom: 5px;
-        }
-
-        .evidence-item a {
-            color: #1f6b4a;
-            font-size: 13px;
-        }
-
-        .signal {
-            margin-top: 10px;
-            padding: 12px;
-            background: #f5f7f6;
-            border-left: 4px solid #1f6b4a;
-        }
-
         .hidden {
             display: none;
         }
 
+        /* =========================
+           AI RESPONSE
+        ========================= */
+
+        .ai-response {
+            margin-top: 8px;
+        }
+
+        .response-section {
+            margin-bottom: 22px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            color: #173b2b;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e5ebe7;
+        }
+
+        .section-title::before {
+            content: "";
+            width: 4px;
+            height: 20px;
+            background: #1f6b4a;
+            border-radius: 3px;
+        }
+
+        .assessment-text {
+            background: #f7faf8;
+            border: 1px solid #e2ebe5;
+            border-radius: 9px;
+            padding: 16px;
+            line-height: 1.7;
+            font-size: 14px;
+        }
+
+        .assessment-item {
+            margin-bottom: 12px;
+        }
+
+        .assessment-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .assessment-item strong {
+            color: #173b2b;
+        }
+
+        .recommendation-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .recommendation {
+            background: #f8fbf9;
+            border: 1px solid #dce8df;
+            border-radius: 9px;
+            padding: 16px;
+        }
+
+        .recommendation-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #1f6b4a;
+            color: white;
+            font-size: 13px;
+            font-weight: bold;
+            margin-right: 9px;
+        }
+
+        .recommendation-title {
+            color: #173b2b;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .recommendation-body {
+            margin-top: 10px;
+            padding-left: 37px;
+            line-height: 1.65;
+            font-size: 14px;
+        }
+
+        .why-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .why-card {
+            background: #f8faf9;
+            border: 1px solid #e3e9e5;
+            border-radius: 9px;
+            padding: 15px;
+        }
+
+        .why-card h4 {
+            color: #173b2b;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .why-card p {
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .metric-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 9px;
+        }
+
+        .metric {
+            background: #edf5f0;
+            color: #174f37;
+            border: 1px solid #d4e5da;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .time-horizon {
+            background: #f7faf8;
+            border-left: 4px solid #1f6b4a;
+            padding: 14px 16px;
+            border-radius: 7px;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .limitation-list {
+            padding-left: 20px;
+        }
+
+        .limitation-list li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        /* =========================
+           EVIDENCE
+        ========================= */
+
+        .evidence {
+            margin-top: 25px;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 22px;
+        }
+
+        .evidence h3,
+        .signals-heading {
+            color: #173b2b;
+            margin-bottom: 12px;
+        }
+
+        .evidence-item {
+            background: #f7faf8;
+            border: 1px solid #e1e9e4;
+            padding: 15px;
+            border-radius: 9px;
+            margin-top: 10px;
+        }
+
+        .evidence-item h4 {
+            margin-bottom: 8px;
+            color: #173b2b;
+        }
+
+        .evidence-item p {
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        .evidence-item a {
+            display: inline-block;
+            margin-top: 6px;
+            color: #1f6b4a;
+            font-size: 13px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .evidence-item a:hover {
+            text-decoration: underline;
+        }
+
+        .similarity {
+            display: inline-block;
+            background: #e9f2ec;
+            color: #174f37;
+            padding: 4px 8px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* =========================
+           REASONING
+        ========================= */
+
+        .signal {
+            margin-top: 10px;
+            padding: 15px;
+            background: #f8faf9;
+            border: 1px solid #e1e8e3;
+            border-left: 4px solid #1f6b4a;
+            border-radius: 7px;
+        }
+
+        .signal-row {
+            margin-bottom: 9px;
+            line-height: 1.55;
+            font-size: 13px;
+        }
+
+        .signal-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .signal-label {
+            color: #173b2b;
+            font-weight: bold;
+        }
+
+        /* =========================
+           ERROR
+        ========================= */
+
+        .error {
+            background: #fff5f5;
+            border: 1px solid #f0cccc;
+            color: #9b2c2c;
+            padding: 14px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 13px;
+        }
+
         @media (max-width: 800px) {
+
             .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .why-grid {
                 grid-template-columns: 1fr;
             }
 
             .header {
                 padding: 20px;
+            }
+
+            .container {
+                padding: 0 12px;
+            }
+
+            .card {
+                padding: 18px;
             }
         }
     </style>
@@ -162,12 +404,16 @@
 <div class="container">
 
     <div class="card">
+
         <h2>Environmental Analysis</h2>
         <br>
 
         <label>Ask your question</label>
-        <textarea id="query"
-            placeholder="Example: My farm has low rainfall, low soil organic carbon and wheat monoculture. What should I do?"></textarea>
+
+        <textarea
+            id="query"
+            placeholder="Example: My farm has low rainfall, low soil organic carbon and wheat monoculture. What should I do?"
+        ></textarea>
 
         <div class="grid">
 
@@ -207,27 +453,37 @@
 
         </div>
 
-        <button id="analyzeBtn" onclick="analyze()">Analyze Environment</button>
+        <button id="analyzeBtn" onclick="analyze()">
+            Analyze Environment
+        </button>
 
         <div id="status" class="status"></div>
+
     </div>
 
 
     <div id="result" class="card hidden">
 
-        <h2>AI Assessment</h2>
+        <h2>AI Environmental Assessment</h2>
+
         <br>
 
-        <div id="answer" class="answer"></div>
+        <div id="answer" class="ai-response"></div>
 
         <div class="evidence">
+
             <h3>Retrieved Scientific Evidence</h3>
+
             <div id="evidenceList"></div>
+
         </div>
 
         <div class="evidence">
-            <h3>Reasoning Signals</h3>
+
+            <h3 class="signals-heading">Reasoning Signals</h3>
+
             <div id="signalsList"></div>
+
         </div>
 
     </div>
@@ -239,6 +495,369 @@
 
 const API_URL = "https://darukaa-ai-engineer.onrender.com";
 
+
+function escapeHTML(value) {
+
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+function cleanText(text) {
+
+    return escapeHTML(text)
+        .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+        .replace(/\*(.*?)\*/g, "<em>$1</em>");
+
+}
+
+
+function formatAnswer(text) {
+
+    const sections = {
+        assessment: "",
+        recommendation: [],
+        why: [],
+        metrics: [],
+        time: "",
+        evidence: [],
+        limitations: []
+    };
+
+    let current = null;
+
+    const lines = text
+        .replace(/\r/g, "")
+        .split("\n");
+
+    for (let rawLine of lines) {
+
+        const line = rawLine.trim();
+
+        if (!line || line === "---") {
+            continue;
+        }
+
+        const normalized = line
+            .replace(/\*/g, "")
+            .replace(/#/g, "")
+            .trim()
+            .toLowerCase();
+
+        if (normalized === "assessment" || normalized === "ai assessment") {
+            current = "assessment";
+            continue;
+        }
+
+        if (normalized === "recommendation" || normalized === "recommendations") {
+            current = "recommendation";
+            continue;
+        }
+
+        if (normalized === "why it works") {
+            current = "why";
+            continue;
+        }
+
+        if (normalized === "impacted metrics") {
+            current = "metrics";
+            continue;
+        }
+
+        if (normalized === "time horizon") {
+            current = "time";
+            continue;
+        }
+
+        if (normalized === "evidence") {
+            current = "evidence";
+            continue;
+        }
+
+        if (normalized === "limitations") {
+            current = "limitations";
+            continue;
+        }
+
+        if (current === "recommendation") {
+
+            const match = line.match(/^(\d+)\.\s*(.*)$/);
+
+            if (match) {
+
+                sections.recommendation.push({
+                    title: match[2],
+                    body: []
+                });
+
+            } else if (sections.recommendation.length > 0) {
+
+                sections.recommendation[
+                    sections.recommendation.length - 1
+                ].body.push(line);
+
+            }
+
+            continue;
+        }
+
+        if (current === "why") {
+
+            const clean = line
+                .replace(/^[-•]\s*/, "")
+                .trim();
+
+            if (clean) {
+                sections.why.push(clean);
+            }
+
+            continue;
+        }
+
+        if (current === "metrics") {
+
+            const clean = line
+                .replace(/^[-•]\s*/, "")
+                .trim();
+
+            if (clean) {
+                sections.metrics.push(clean);
+            }
+
+            continue;
+        }
+
+        if (current === "limitations") {
+
+            const clean = line
+                .replace(/^[-•]\s*/, "")
+                .trim();
+
+            if (clean) {
+                sections.limitations.push(clean);
+            }
+
+            continue;
+        }
+
+        if (current === "time") {
+
+            sections.time += " " + line;
+            continue;
+        }
+
+        if (current === "assessment" || current === "evidence") {
+
+            sections[current] += line + "\n";
+        }
+    }
+
+
+    let html = "";
+
+
+    /* ASSESSMENT */
+
+    if (sections.assessment.trim()) {
+
+        const assessmentLines = sections.assessment
+            .trim()
+            .split("\n")
+            .filter(Boolean);
+
+        html += `
+            <div class="response-section">
+                <div class="section-title">Assessment</div>
+                <div class="assessment-text">
+        `;
+
+        assessmentLines.forEach(line => {
+
+            const cleaned = line
+                .replace(/^[-•]\s*/, "")
+                .replace(/^\d+\.\s*/, "");
+
+            html += `
+                <div class="assessment-item">
+                    ${cleanText(cleaned)}
+                </div>
+            `;
+
+        });
+
+        html += `
+                </div>
+            </div>
+        `;
+    }
+
+
+    /* RECOMMENDATIONS */
+
+    if (sections.recommendation.length) {
+
+        html += `
+            <div class="response-section">
+                <div class="section-title">Recommendations</div>
+                <div class="recommendation-grid">
+        `;
+
+        sections.recommendation.forEach((item, index) => {
+
+            const title = item.title
+                .replace(/^\*\*/, "")
+                .replace(/\*\*:/, ":")
+                .replace(/\*\*/g, "");
+
+            html += `
+                <div class="recommendation">
+
+                    <div>
+                        <span class="recommendation-number">
+                            ${index + 1}
+                        </span>
+
+                        <span class="recommendation-title">
+                            ${cleanText(title)}
+                        </span>
+                    </div>
+
+                    <div class="recommendation-body">
+                        ${item.body.map(line => `
+                            <div style="margin-bottom:7px;">
+                                ${cleanText(
+                                    line
+                                        .replace(/^[-•*]\s*/, "")
+                                        .replace(/\*\*/g, "")
+                                )}
+                            </div>
+                        `).join("")}
+                    </div>
+
+                </div>
+            `;
+
+        });
+
+        html += `
+                </div>
+            </div>
+        `;
+    }
+
+
+    /* WHY IT WORKS */
+
+    if (sections.why.length) {
+
+        html += `
+            <div class="response-section">
+                <div class="section-title">Why It Works</div>
+                <div class="why-grid">
+        `;
+
+        sections.why.forEach(item => {
+
+            const parts = item.split(":");
+
+            let title = parts.shift() || "";
+            let body = parts.join(":");
+
+            html += `
+                <div class="why-card">
+                    <h4>${cleanText(title.replace(/\*\*/g, ""))}</h4>
+                    <p>${cleanText(body.replace(/\*\*/g, "").trim())}</p>
+                </div>
+            `;
+
+        });
+
+        html += `
+                </div>
+            </div>
+        `;
+    }
+
+
+    /* IMPACTED METRICS */
+
+    if (sections.metrics.length) {
+
+        html += `
+            <div class="response-section">
+                <div class="section-title">Impacted Metrics</div>
+                <div class="metric-list">
+        `;
+
+        sections.metrics.forEach(metric => {
+
+            html += `
+                <span class="metric">
+                    ${cleanText(metric)}
+                </span>
+            `;
+
+        });
+
+        html += `
+                </div>
+            </div>
+        `;
+    }
+
+
+    /* TIME HORIZON */
+
+    if (sections.time.trim()) {
+
+        html += `
+            <div class="response-section">
+                <div class="section-title">Time Horizon</div>
+                <div class="time-horizon">
+                    ${cleanText(sections.time.trim())}
+                </div>
+            </div>
+        `;
+    }
+
+
+    /* LIMITATIONS */
+
+    if (sections.limitations.length) {
+
+        html += `
+            <div class="response-section">
+                <div class="section-title">Limitations</div>
+                <ul class="limitation-list">
+        `;
+
+        sections.limitations.forEach(item => {
+
+            html += `
+                <li>${cleanText(
+                    item.replace(/\*\*/g, "")
+                )}</li>
+            `;
+
+        });
+
+        html += `
+                </ul>
+            </div>
+        `;
+    }
+
+
+    return html;
+
+}
+
+
 async function analyze() {
 
     const button = document.getElementById("analyzeBtn");
@@ -248,98 +867,214 @@ async function analyze() {
     const query = document.getElementById("query").value.trim();
 
     if (!query) {
-        status.textContent = "Please enter an environmental question.";
+
+        status.textContent =
+            "Please enter an environmental question.";
+
         return;
     }
 
+
     const body = {
+
         query: query,
+
         environmental_data: {
-            soil_organic_carbon: Number(document.getElementById("soc").value),
-            soil_moisture: Number(document.getElementById("moisture").value),
-            rainfall: document.getElementById("rainfall").value,
-            land_use: document.getElementById("land_use").value,
-            crop: document.getElementById("crop").value,
-            region: document.getElementById("region").value
+
+            soil_organic_carbon:
+                Number(document.getElementById("soc").value),
+
+            soil_moisture:
+                Number(document.getElementById("moisture").value),
+
+            rainfall:
+                document.getElementById("rainfall").value,
+
+            land_use:
+                document.getElementById("land_use").value,
+
+            crop:
+                document.getElementById("crop").value,
+
+            region:
+                document.getElementById("region").value
+
         },
+
         top_k: 3
+
     };
 
+
     button.disabled = true;
-    status.textContent = "Analyzing environmental conditions and retrieving evidence...";
+
+    status.textContent =
+        "Analyzing environmental conditions and retrieving evidence...";
+
     result.classList.add("hidden");
+
 
     try {
 
-        const response = await fetch(`${API_URL}/analyze`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(body)
-        });
+        const response = await fetch(
+            `${API_URL}/analyze`,
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify(body)
+            }
+        );
+
 
         const data = await response.json();
 
+
         if (!response.ok) {
-            throw new Error(data.detail || "API request failed.");
+
+            throw new Error(
+                data.detail || "API request failed."
+            );
+
         }
 
-        document.getElementById("answer").textContent = data.answer;
 
-        const evidenceList = document.getElementById("evidenceList");
+        /* FORMAT AI ANSWER */
+
+        document.getElementById("answer").innerHTML =
+            formatAnswer(data.answer);
+
+
+        /* SCIENTIFIC EVIDENCE */
+
+        const evidenceList =
+            document.getElementById("evidenceList");
+
         evidenceList.innerHTML = "";
+
 
         data.retrieved_evidence.forEach(item => {
 
             const div = document.createElement("div");
+
             div.className = "evidence-item";
 
             div.innerHTML = `
-                <h4>${item.title}</h4>
-                <p><strong>Source:</strong> ${item.source}</p>
-                <p><strong>Similarity:</strong> ${item.similarity}</p>
-                <a href="${item.source_url}" target="_blank">
-                    View source
+                <h4>${escapeHTML(item.title)}</h4>
+
+                <p>
+                    <strong>Source:</strong>
+                    ${escapeHTML(item.source)}
+                </p>
+
+                <p>
+                    <strong>Similarity:</strong>
+                    <span class="similarity">
+                        ${escapeHTML(item.similarity)}
+                    </span>
+                </p>
+
+                <a
+                    href="${escapeHTML(item.source_url)}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    View scientific source →
                 </a>
             `;
 
             evidenceList.appendChild(div);
+
         });
 
-        const signalsList = document.getElementById("signalsList");
+
+        /* REASONING SIGNALS */
+
+        const signalsList =
+            document.getElementById("signalsList");
+
         signalsList.innerHTML = "";
+
 
         data.reasoning_signals.forEach(signal => {
 
-            const div = document.createElement("div");
+            const div =
+                document.createElement("div");
+
             div.className = "signal";
 
             div.innerHTML = `
-                <strong>Variables:</strong>
-                ${signal.variables.join(", ")}
-                <br><br>
-                <strong>Relationship:</strong>
-                ${signal.relationship}
-                <br><br>
-                <strong>Implication:</strong>
-                ${signal.implication}
+
+                <div class="signal-row">
+
+                    <span class="signal-label">
+                        Variables:
+                    </span>
+
+                    ${escapeHTML(
+                        signal.variables.join(", ")
+                    )}
+
+                </div>
+
+
+                <div class="signal-row">
+
+                    <span class="signal-label">
+                        Relationship:
+                    </span>
+
+                    ${escapeHTML(
+                        signal.relationship
+                    )}
+
+                </div>
+
+
+                <div class="signal-row">
+
+                    <span class="signal-label">
+                        Implication:
+                    </span>
+
+                    ${escapeHTML(
+                        signal.implication
+                    )}
+
+                </div>
+
             `;
 
             signalsList.appendChild(div);
+
         });
 
+
         result.classList.remove("hidden");
-        status.textContent = "Analysis completed successfully.";
+
+        status.textContent =
+            "Analysis completed successfully.";
+
+        result.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
 
     } catch (error) {
 
-        status.textContent = "Error: " + error.message;
+        status.textContent =
+            "Error: " + error.message;
 
     } finally {
 
         button.disabled = false;
+
     }
+
 }
 
 </script>
